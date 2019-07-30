@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block scripts %} 
+{{ super() }}
+<!-- Load in the d3 library and graphviz-->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.0/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@1.3.1/build/d3-graphviz.min.js"></script>
+<script>
+d3.select("#avsImg")
+      .on("mouseover", function(){
+          d3.select(this)
+            .attr("width","64")
+            .attr("height","64")
+            .on("scroll",function(){
+               console.log("click event");
+               console.log(d3.event);
+
+            })
+
+          // Get current event info
+          console.log(d3.event);
+          
+          // Get x & y co-ordinates
+          console.log(d3.mouse(this));
+      })
+      .on("mouseout", function(){
+          d3.select(this)
+            .attr("width","32px")
+            .attr("height","32px")
+      });
+
+//testing input field
+//document.getElementById("avsImg").addEventListener('click', function() {
+//  console.log("scroll");
+//})
+var keyIn='';
+d3.select("#in")
+      .on("keydown",function(){
+          console.log(d3.event.key) 
+          //console.log(d3.select("#in").text) 
+          //console.log(document.getElementById("in").value)
+      })
+d3.select("#in")
+      .on("keyup",function(){
+          //if (d3.event.key == '1'){
+          d3.select("#test").text(d3.event.key);        
+          if (d3.event.key == 'ArrowRight'){
+             document.getElementById("out").value=document.getElementById("out").value+keyIn;
+             document.getElementById("in").value='';
+             keyIn='';
+          }else{
+             keyIn=keyIn+d3.event.key;
+          } 
+      });
+
+d3.select("#notes").append("p").append("b").text("Notes");
+d3.select("#notes").append("ul")
+    .append("li").text(`
+keyboard application in tkinter
+`)
+    .append("ul")
+        .append("li").text(`
+same code can run on windows or linux
+`)
+        .append("li").text(`
+gui can run on x11 forwarding
+`)
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container" >
+  <div class="row" >
+    <div class="col-md-3" style="background-color:lavender" >
+      <img  id="avsImg"  border="0" src="/static/colorado_avalanche_2016-pres_a.png" alt="Avs" width="32" height="32">
+      <textarea id="out"> </textarea>
+    </div>
+    <div id="test" class="col-md-9" style="background-color:green">
+      <!--<input id="in" placeholder="Enter some text" name="name"/>-->
+      <textarea id="in"> </textarea>
+    </div>
+  </div>
+</div>
+<div class="container" >
+  <div class="row" >
+    <div class="col-md-12" style="background-color:lightblue" >
+    <div id="notes"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

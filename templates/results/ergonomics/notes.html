@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block scripts %} 
+{{ super() }}
+<!-- Load in the d3 library and graphviz-->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.0/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@1.3.1/build/d3-graphviz.min.js"></script>
+<script>
+
+//title
+d3.select("#notes").append("p").append("b").text("Posture");
+
+// sway back
+d3.select("#notes").append("ul")
+    .append("li").text(`
+sway back
+`)
+
+// pelvic tilt
+d3.select("#notes").append("ul")
+    .append("li").text(`
+pelvic tilt 
+`)
+    .append("ul")
+        .append("li").text(`
+anterior
+`)
+        .append("li").text(`
+posterior
+`)
+
+// upper lower cross
+d3.select("#notes").append("ul")
+    .append("li").text(`
+upper / lower cross
+`)
+
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container" >
+  <div class="row" >
+    <div class="col-md-8" style="background-color:lightblue" >
+    <div id="notes"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block scripts %} 
+{{ super() }}
+<!-- Load in the d3 library and graphviz-->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.0/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@1.3.1/build/d3-graphviz.min.js"></script>
+<script>
+
+var dotIdx=0;
+var graphviz = d3.select("#graph").graphviz()
+    .transition(function() {
+            return d3.transition("main")
+                .ease(d3.easeLinear)
+                .delay(500)
+                .duration(1500);
+            })
+            .logEvents(true)
+            .on("initEnd",render);
+
+
+function render(){
+        var dot = dots[dotIdx][0];
+        console.log(dot);
+        graphviz.renderDot(dot)
+            d3.select("#main").on("click", function(){
+                    dotIdx = 0;
+                    render();
+            });
+            d3.select("#jack").on("click", function(){
+                    dotIdx = 1;
+                    render();
+            });
+            d3.select("#cellB").on("click", function(){
+                    dotIdx = 2;
+                    render();
+            });
+}
+var dots = [
+        [ `
+        digraph {
+            graph [label="TES Network Setup" labelloc="t", fontsize="20.0" tooltip=" "]
+            node [style="filled"]
+            {rank=same intKs, extKs}
+
+            jackalope [id="NodeId1" label=<  <b>Jackalope Kickstart Server (TCO)</b> >  fillcolor="#d62728"]
+            chupacabra [id="NodeId2" label=<  <b>Chupacabra </b> >  fillcolor="#1f77b4"]
+            extKs [id="NodeId3" label=<  <b>External kickstart Servers </b> > fillcolor="#2ca02c"]
+            extHost [id="NodeId4" label=<  <b> External host </b> > fillcolor="#2ca02c"]
+            intKs [id="NodeId5" label=<  <b>Internal kickstart Servers </b> > fillcolor="#ff7f0e"]
+            intHost [id="NodeId6" label=<  <b>Internal Host </b> > fillcolor="#ff7f0e"]
+
+            intHost -> intKs[id="intHost2ks" label=< Kickstart <br/> HostPC backup <br/> customization <br/> telnet for xinitd services <br/> yum commands >]
+            extHost -> extKs[id="extH2extK" label=< Kickstart <br/> HostPC backup <br/> customization <br/> telnet for xinitd services <br/> yum commands >]
+            intKs -> chupacabra [id="intKs2chup" label=< reposync for /var/ftp/merlin_repository >]
+            intKs -> jackalope [id="intKs2jack" label=< rsync /var/ftp/acd/ <br/> rsync /var/redhat.disks <br/> rsync /var/ftp/patches <br/> rsync /var/ftp/CentOS   >]
+            jackalope -> extKs [id="EdgeId131" label=< rsync /var/ftp/merlin_repository <br/>  rsync /var/ftp/patches <br/> rsync /var/ftp/CentOS <br/> modify ks.cfg <br/> rsync /var/redhat.disks  >]
+            jackalope -> chupacabra [id="EdgeId12" label=<  reposync /var/ftp/merlin_repository <br/> xmlrpc call and wget for /var/ftp/patches <br/> wget managed credentials master file >]
+        }
+        `],
+        [ `
+digraph {
+    graph [label="Kickstart Server Setup" labelloc="t", fontsize="20.0" tooltip=" "]
+    node [style="filled"]
+    Node1 [id="NodeId1" label=<  <b>Jackalope Kickstart Server (TCO)</b><br/> 
+Contains /var/redhat.disks file structure<br/>
+Runs xinetd service: fileList, statusTest<br/>
+Has /var/ftp/ dir structure<br/>
+weekly cronjobs that push /var/redhat.disks to external servers<br/>
+weekly cronjobs that modify the ks.cfg on external servers<br/>
+reposync /var/ftp/merlin_repository every 12 hours for YUM from chupacabra<br/>
+using /etc/cron.d/reposync which calls /usr/local/bin/reposync.sh<br/>
+(note: the repodata cache is 6 hours before an reposync is really done w/ chupacabra - ask Dave)<br/>
+cronjob that runs every 2 hours 7am-7pm that does xmlrpc calls to get patch list<br/>
+wget of the patches for /var/ftp/patches from chupacabra<br/>
+cronjob to push /var/ftp/patches to external servers every 12 hours<br/>
+reposync is setup in /etc/cron.d/reposync<br/>
+Hourly merlin cron to wget managed credential file from chupacabra<br/>
+Weekly cronjob to push /var/ftp/CentOS repo to external servers<br/>
+
+ >  fillcolor="#d62728"]
+}`],
+];
+
+
+</script>
+{% endblock %}
+{% block content %}
+<div class="container" id="graph" style="text-align: center;"></div>
+<div class="container" style="text-align: center;">
+  <button name="test" id="main"  > main </button>
+  <button name="jack" id="jack"  > Jackalope </button>
+</div>
+{% endblock %}

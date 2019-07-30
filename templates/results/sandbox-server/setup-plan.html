@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block scripts %} 
+{{ super() }}
+<!-- Load in the d3 library and graphviz-->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.0/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@1.3.1/build/d3-graphviz.min.js"></script>
+<script>
+
+d3.select("#notes").append("p").append("b").text("Todo");
+d3.select("#notes").append("ul")
+    .append("li").text(`
+rename flaskGraph to sandbox
+`)
+    .append("li").text(`
+version control sandbox app
+`)
+    .append("li").text(`
+setup home PC
+`)
+    .append("ul")
+        .append("li").text(`
+boot and check status of OS (power cord, ethernet, keyboard, monitor, hdmi)
+`)
+        .append("li").text(`
+connect to router
+`)
+        .append("li").text(`
+setup local sandbox app
+`)
+        .append("li").text(`
+follow digital ocean document for deployment
+`)
+        .append("a").attr("href","https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps").text(`
+  How To: deploy flask app
+`)
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container" >
+  <div class="row" >
+    <div class="col-md-12" style="background-color:lightblue" >
+    <div id="notes"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "bootstrap/base.html" %}
+
+{% block navbar %}
+<ul class="nav nav-pills">
+    <li><a href="{{ url_for('home') }}">home</a></li>
+    {% for EquipName, cFiles in results %}
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{EquipName}}
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                {% for cFileName in cFiles %}
+                    <li><a href="{{ url_for('output',name=EquipName, run=cFileName[:-5]) }}">{{cFileName[:-5]}}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
