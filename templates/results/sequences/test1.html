@@ -103,6 +103,16 @@ svg.selectAll(".dot")
     .attr("cy", function(d) { return yScale(d.y) })
     .attr("r", 5);
 
+
+var fDisplay=false;
+
+    d3.select("#plt").on("click",function(){
+        if (fDisplay==false){
+            fDisplay=true;
+            d3.select("#setup").append("input").attr("type","text");
+            }
+        })
+
 </script>
 
 {% endblock %}
@@ -111,10 +121,10 @@ svg.selectAll(".dot")
 <div class="container" >
   <div class="row" >
     <div class="col-md-8" style="background-color:lightblue" >
-      <div id="setup"> 
-        <form action="">
+      <div > 
+        <form action="" id="setup">
           <input type="radio" name="gType" value="seq"> sequence<br>
-          <input type="radio" name="gType" value="custom"> custom<br>
+          <input id="plt" type="radio" name="gType" value="custom"> custom<br>
         </form>
       </div>
     </div>
