@@ -58,25 +58,34 @@ class mKeyboard(Frame):
         tmpList.append(cList[f])
       self.keyDict[self.fingers[f]]=tmpList
 
-    self.textOut = Entry(self.f)
-    self.textOut.insert('end','test')
+    self.textOut = Label(self.f,width=12,text='',bg='light blue')
     self.textOut.grid(columnspan=2)
-
+    # erase all button
     self.bEraseAll = Button(self.f, text='Erase All',height=1, command=self.eraseAll)
     self.bEraseAll.grid(row=0, column=2)
 
+    # copy to clipboard button
+    self.bCopy = Button(self.f, text='Copy',height=1, command=self.copy)
+    self.bCopy.grid(row=2, column=2)
+
     return  
 
+  def copy(self):
+    print 'copy: {0}'.format(self.textOut.cget("text"))
+    self.master.clipboard_clear()
+    self.master.clipboard_append(self.textOut.cget("text"))
+    self.master.update()
 
   def eraseAll(self):
     print 'erase all'
-    self.textOut.delete(0,'end')
+    self.textOut.config(text='')
 
   def moveRow(self,char):
     #print 'moveRow'
     if self.RL == '':
       print self.keyDict[char][self.row/2]
-      self.textOut.insert('end',self.keyDict[char][self.row/2])
+      txtTmp=self.textOut.cget('text')
+      self.textOut.config(text=txtTmp+self.keyDict[char][self.row/2])
     elif self.RL == 'R':
       self.lOut[self.row].config(bg='green')
       self.lOut[self.row+1].config(bg='green')
