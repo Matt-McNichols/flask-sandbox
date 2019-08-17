@@ -1,4 +1,6 @@
 from Tkinter import *
+import pyperclip
+
 
 class mKeyboard(Frame):
   def __init__(self,master):
@@ -67,14 +69,11 @@ class mKeyboard(Frame):
     # copy to clipboard button
     self.bCopy = Button(self.f, text='Copy',height=1, command=self.copy)
     self.bCopy.grid(row=2, column=2)
-
     return  
 
   def copy(self):
     print 'copy: {0}'.format(self.textOut.cget("text"))
-    self.master.clipboard_clear()
-    self.master.clipboard_append(self.textOut.cget("text"))
-    self.master.update()
+    pyperclip.copy(self.textOut.cget("text"))
 
   def eraseAll(self):
     print 'erase all'
