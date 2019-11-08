@@ -2,6 +2,10 @@ from Tkinter import *
 import pyperclip
 
 
+# TODO: 
+# add cmd function
+# add change row function to cmd
+
 class eightKey(Frame):
   def __init__(self,master):
     self.f = Frame.__init__(self, master)
@@ -54,27 +58,22 @@ class eightKey(Frame):
       tmpR1=self.charRows[i+1]
       fingerChars.append(tmpR+tmpR1)
 
-    ## define 8 fingers and keys they map to
-    #self.keyDict={}
-    #for f in range(len(self.fingers)):
-    #  tmpList=[]
-    #  for cList in fingerChars:
-    #    tmpList.append(cList[f])
-    #  self.keyDict[self.fingers[f]]=tmpList
+    # define 8 fingers and keys they map to
+    self.keyDict={}
+    for f in range(len(self.fingers)):
+      tmpList=[]
+      for cList in fingerChars:
+        tmpList.append(cList[f])
+      self.keyDict[self.fingers[f]]=tmpList
 
-    #self.textOut = Label(self.f,width=12,text='',bg='light blue')
-    #self.textOut.grid(columnspan=2)
-    ## erase all button
-    #self.bEraseAll = Button(self.f, text='Erase All',height=1, command=self.eraseAll)
-    #self.bEraseAll.grid(row=0, column=2)
+    # define output text label
+    self.textOut = Label(self.f,width=12,text='',bg='light blue')
+    self.textOut.grid(columnspan=2)
 
-    ## copy to clipboard button
-    #self.bCopy = Button(self.f, text='Copy',height=1, command=self.copy)
-    #self.bCopy.grid(row=2, column=2)
-    
     self.cPrime=None
     self.cSec=None
     self.isCMD=False
+    self.isHold=''
 
     return  
 
@@ -96,19 +95,77 @@ class eightKey(Frame):
         self.isCMD=False
         return
       if not self.cSec:
-        print 'INSERT({0})'.format(self.cPrime)
+        #print 'INSERT({0})'.format(self.cPrime)
+        self.INS()
         self.cPrime=None
       else:
-        # quick typing will stagger up/down (pdown/sdown/pup/sup)
-        print 'INSERT({0})'.format(self.cPrime)
-        self.cPrime=self.cSec
+        ## quick typing will stagger up/down (pdown/sdown/pup/sup)
+        ##print 'INSERT({0})'.format(self.cPrime)
+        #self.INS()
+        self.CMD()
+        self.cPrime=None
         self.cSec=None
     if self.cSec is event.char:
       print 'CMD({0},{1})'.format(self.cPrime,self.cSec)
+      self.CMD()
       self.cSec=None
       #self.cPrime=None
       self.isCMD=True
 
+  def INS(self):
+    cTmp=self.keyDict[self.cPrime][self.row/2]
+    txtTmp=self.textOut.cget('text')
+    # check for key hold
+    if len(txtTmp) > 2:
+      if txtTmp[-1] is cTmp and txtTmp[-2] is cTmp:
+        # assume key hold 
+        self.textOut.config(text=txtTmp[0:-2])
+        # set hold flag
+        self.isHold=cTmp
+        return
+    if self.isHold is '':
+      self.textOut.config(text=txtTmp+cTmp)
+    elif self.isHold != cTmp:
+      self.isHold=''
+      self.textOut.config(text=txtTmp+cTmp)
+
+  def CMD(self):
+    if self.cPrime is 'f' and self.cSec is 'j':
+      print 'space'
+      txtTmp=self.textOut.cget('text')
+      self.textOut.config(text=txtTmp+' ')
+    elif self.cPrime is 'j' and self.cSec is 'f':
+      print 'backspace'
+      txtTmp=self.textOut.cget('text')
+      self.textOut.config(text=txtTmp[0:-1])
+    elif self.cPrime is 'a' and self.cSec is ';':
+      # copy
+      self.copy()
+    elif self.cPrime is ';' and self.cSec is 'a':
+      # cut
+      self.cut()
+    elif self.cPrime is 'k':
+      self.lOut[self.row].config(bg='green')
+      self.lOut[self.row+1].config(bg='green')
+      # change row 
+      if self.cSec is 'f':
+        self.row=0
+      elif self.cSec is 'd':
+        self.row=2
+      elif self.cSec is 's':
+        self.row=4
+      elif self.cSec is 'a':
+        self.row=6
+      self.lOut[self.row].config(bg='white')
+      self.lOut[self.row+1].config(bg='white')
+      
+  def copy(self):
+    print 'copy: {0}'.format(self.textOut.cget("text"))
+    pyperclip.copy(self.textOut.cget("text"))
+
+  def cut(self):
+    self.copy()
+    self.textOut.config(text='')
   
 root = Tk()
 eightKeyInst=eightKey(root)
